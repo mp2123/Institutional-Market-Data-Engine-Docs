@@ -10,7 +10,13 @@ This repository documents the architecture, data structures, and sanitized opera
 
 - **Asynchronous Extraction**: Engineered a Python extraction layer utilizing `ThreadPoolExecutor` to parallelize data retrieval across equities.
 - **Relational Data Warehousing**: Eliminated rate-limited scraping in favor of structured `SQLAlchemy` inserts with strict duplicate elimination.
-- **Interactive Analytics**: Built a `Streamlit` and `Plotly` frontend to generate localized momentum heatmaps and candlestick charts.
+- **Advanced Quantitative Dashboard**: Built a massive 9-tab `Streamlit` and `Plotly` institutional analytics engine featuring:
+  - **Price Action & SMC**: Fair Value Gaps (FVG) and Liquidity analysis (PDH/PDL).
+  - **Data Science & ML Classification**: K-Means Volatility Clustering and Hidden Markov Models (HMM) for regime detection.
+  - **Alternative Data**: Live NLP News Sentiment via NLTK VADER.
+  - **Risk & Volatility**: Maximum Drawdown, Value at Risk (VaR), and Pearson Correlation Matrices.
+  - **Options Analytics**: Black-Scholes pricing and implied Volatility expected moves.
+  - **Stochastic Modeling**: Geometric Brownian Motion (GBM) and Heston Stochastic Volatility SDE Monte Carlo simulators.
 - **Privacy-First Operations**: Abstracted the executable code behind a documentation shell to protect sensitive API credentials and local deployment environments.
 
 ## Public Artifacts
@@ -23,8 +29,9 @@ This repository documents the architecture, data structures, and sanitized opera
 flowchart LR
     A["Charles Schwab API"] -- "OAuth / HTTPS" --> B["Python Ingestion Engine"]
     B -- "ThreadPoolExecutor" --> C["SQLite Data Warehouse"]
-    C -- "SQLAlchemy" --> D["Streamlit Dashboard"]
-    D -- "Plotly" --> E["Quantitative Risk Heatmaps"]
+    C -- "Pandas / NumPy" --> D["ML Feature Engineering"]
+    D -- "scikit-learn / hmmlearn" --> E["Streamlit Dashboard"]
+    E -- "Plotly" --> F["Quantitative Risk & ML Classification"]
 ```
 
 ## Public vs. Private Boundary
