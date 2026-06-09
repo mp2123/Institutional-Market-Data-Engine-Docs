@@ -1,0 +1,6 @@
+pandas
+streamlit
+plotly
+schwab-py
+sqlalchemy
+requests
