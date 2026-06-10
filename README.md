@@ -1,6 +1,6 @@
 # Institutional Market Data Engine
 
-Public documentation shell for a private institutional-grade market data ingestion pipeline.
+Public documentation shell for a private market data ingestion pipeline.
 
 The private implementation connects directly to the Charles Schwab Developer API via OAuth, extracting, normalizing, and storing high-frequency pricing data in a local SQLite data warehouse for quantitative risk assessment.
 
