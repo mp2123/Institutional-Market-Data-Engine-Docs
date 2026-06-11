@@ -1,23 +1,23 @@
-# Institutional Market Data Engine
+# Institutional Market Data Engine Docs
 
 Public documentation shell for a private market data ingestion pipeline.
 
-The private implementation connects directly to the Charles Schwab Developer API via OAuth, extracting, normalizing, and storing high-frequency pricing data in a local SQLite data warehouse for quantitative risk assessment.
+The private implementation uses OAuth-based market-data access, local SQLite storage, and Python analytics workflows to explore reliable pricing-data ingestion and dashboarding.
 
 This repository documents the architecture, data structures, and sanitized operating model without exposing private OAuth client secrets, API tokens, or local machine configurations.
 
 ## What This Demonstrates
 
-- **Asynchronous Extraction**: Engineered a Python extraction layer utilizing `ThreadPoolExecutor` to parallelize data retrieval across equities.
-- **Relational Data Warehousing**: Eliminated rate-limited scraping in favor of structured `SQLAlchemy` inserts with strict duplicate elimination.
-- **Advanced Quantitative Dashboard**: Built a massive 9-tab `Streamlit` and `Plotly` institutional analytics engine featuring:
+- **Parallel Extraction Pattern**: Python ingestion using `ThreadPoolExecutor` to retrieve and normalize pricing data across a watchlist.
+- **Local Relational Storage**: `SQLAlchemy` inserts into SQLite with duplicate checks and repeatable table structure.
+- **Analytics Dashboard Prototype**: Streamlit and Plotly views for market-data exploration, including:
   - **Price Action & SMC**: Fair Value Gaps (FVG) and Liquidity analysis (PDH/PDL).
-  - **Data Science & ML Classification**: K-Means Volatility Clustering and Hidden Markov Models (HMM) for regime detection.
-  - **Alternative Data**: Live NLP News Sentiment via NLTK VADER.
+  - **Data Science & ML Classification**: K-Means volatility clustering and Hidden Markov Model experiments for regime labeling.
+  - **Alternative Data**: NLP news-sentiment experiments with NLTK VADER.
   - **Risk & Volatility**: Maximum Drawdown, Value at Risk (VaR), and Pearson Correlation Matrices.
-  - **Options Analytics**: Black-Scholes pricing and implied Volatility expected moves.
-  - **Stochastic Modeling**: Geometric Brownian Motion (GBM) and Heston Stochastic Volatility SDE Monte Carlo simulators.
-- **Privacy-First Operations**: Abstracted the executable code behind a documentation shell to protect sensitive API credentials and local deployment environments.
+  - **Options Analytics**: Black-Scholes pricing and implied-volatility expected-move examples.
+  - **Stochastic Modeling**: Geometric Brownian Motion (GBM) and Heston-style Monte Carlo simulations.
+- **Privacy-First Documentation**: Public code excerpts are sanitized examples. The live implementation, credentials, token files, databases, and local runtime state remain private.
 
 ## Public Artifacts
 
@@ -47,4 +47,6 @@ This public repository will not include:
 
 ## Current Status
 
-This is a **Documentation Shell**. The private engine is fully functional and running locally. Future updates to this shell may include visual screenshots of the Streamlit dashboard rendering mock pricing data.
+This is a **Documentation Shell**. It is intended to show the architecture and learning value of the private project without publishing live credentials, private data, token files, or local machine paths.
+
+Security note: if any real credential was ever committed to this repository or its history, the credential should be rotated/revoked outside this repo and the history should be reviewed before further promotion.

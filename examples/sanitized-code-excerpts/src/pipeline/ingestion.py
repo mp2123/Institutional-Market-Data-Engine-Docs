@@ -44,10 +44,10 @@ engine = create_engine(DATABASE_URI, echo=False)
 # ========================================================================
 # Schwab OAuth & API Configuration
 # ========================================================================
-SCHWAB_APP_KEY = "LnW5UCOQvLaGii8XU9Dz8VHDB1FWppUg"  # Your app key from Schwab
-SCHWAB_APP_SECRET = "jvrAlp3Z0ocmb6oM"               # Your app secret from Schwab
+SCHWAB_APP_KEY = os.getenv("SCHWAB_APP_KEY", "YOUR_SCHWAB_APP_KEY")  # Your app key from Schwab
+SCHWAB_APP_SECRET = os.getenv("SCHWAB_APP_SECRET", "YOUR_SCHWAB_APP_SECRET")               # Your app secret from Schwab
 SCHWAB_CALLBACK_URL = "https://127.0.0.1:8182/callback"  # Must match your developer portal
-SCHWAB_TOKEN_PATH = "/Users/michaelpanico/Desktop/schwab_token.json"
+SCHWAB_TOKEN_PATH = os.getenv("SCHWAB_TOKEN_PATH", "./.local/schwab_token.json")
 SCHWAB_RESOURCE_VERSION = "1"
 
 from schwab.auth import easy_client
@@ -238,7 +238,7 @@ def main():
         description="Download historical stock data via Charles Schwab API and update the local SQLite database."
     )
     parser.add_argument("--file", type=str,
-                        default="/Users/michaelpanico/Desktop/WL_01_20_25.xlsm",
+                        default="examples/sample_watchlist.xlsx",
                         help="Path to the Excel file that contains the ticker list.")
     parser.add_argument("--ticker_column", type=str, default="Ticker",
                         help="Column name in the Excel file that contains ticker symbols.")
