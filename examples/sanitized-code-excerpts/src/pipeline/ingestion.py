@@ -44,13 +44,31 @@ engine = create_engine(DATABASE_URI, echo=False)
 # ========================================================================
 # Schwab OAuth & API Configuration
 # ========================================================================
-SCHWAB_APP_KEY = os.getenv("SCHWAB_APP_KEY", "YOUR_SCHWAB_APP_KEY")  # Your app key from Schwab
-SCHWAB_APP_SECRET = os.getenv("SCHWAB_APP_SECRET", "YOUR_SCHWAB_APP_SECRET")               # Your app secret from Schwab
+SCHWAB_APP_KEY = os.getenv("SCHWAB_APP_KEY")
+SCHWAB_APP_SECRET = os.getenv("SCHWAB_APP_SECRET")
 SCHWAB_CALLBACK_URL = "https://127.0.0.1:8182/callback"  # Must match your developer portal
 SCHWAB_TOKEN_PATH = os.getenv("SCHWAB_TOKEN_PATH", "./.local/schwab_token.json")
 SCHWAB_RESOURCE_VERSION = "1"
 
 from schwab.auth import easy_client
+
+
+def validate_schwab_config():
+    missing = [
+        name
+        for name, value in {
+            "SCHWAB_APP_KEY": SCHWAB_APP_KEY,
+            "SCHWAB_APP_SECRET": SCHWAB_APP_SECRET,
+        }.items()
+        if not value
+    ]
+
+    if missing:
+        raise RuntimeError(
+            "Missing required Schwab OAuth environment variables: "
+            + ", ".join(missing)
+        )
+
 
 # ========================================================================
 # Helper Functions for Date Ranges and Intervals
@@ -271,6 +289,7 @@ def main():
 
     # Create Schwab client with enum enforcement disabled
     try:
+        validate_schwab_config()
         client = easy_client(
             api_key=SCHWAB_APP_KEY,
             app_secret=SCHWAB_APP_SECRET,
