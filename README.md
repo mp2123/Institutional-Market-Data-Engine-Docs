@@ -23,6 +23,16 @@ This repository documents the architecture, data structures, and sanitized opera
 
 - [Sanitized Code Excerpts](./examples/sanitized-code-excerpts/): Safe excerpts of the ETL pipeline (`ingestion.py`) and the Streamlit dashboard (`app.py`), showing the `ThreadPoolExecutor` and SQLite methodology with all private tokens scrubbed.
 
+## Related Public Proof Shells
+
+This repository is one node in Michael Panico's public market-data / quant-adjacent analytics map. Private implementation repos, credentialed source access, local databases, and production runtime state are intentionally not linked publicly.
+
+- [Portfolio project page](https://www.michaelspanico.com/projects/institutional-market-data-engine)
+- [Market & Quant Analytics Lab Docs](https://github.com/mp2123/Market-Quant-Analytics-Lab-Docs)
+- [Market Data Dashboard Docs](https://github.com/mp2123/Market-Data-Dashboard-Docs)
+- [QuantStrat ML Docs](https://github.com/mp2123/QuantStrat-ML-Docs)
+- [Portfolio Website Docs](https://github.com/mp2123/Portfolio-Website-Docs)
+
 ## Architecture Overview
 
 ```mermaid
