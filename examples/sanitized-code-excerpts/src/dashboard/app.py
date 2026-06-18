@@ -11,7 +11,7 @@ import os
 st.set_page_config(page_title="Institutional Market Data Engine", layout="wide")
 st.title("📈 Institutional Market Data Engine")
 st.markdown("""
-**Data Source:** Charles Schwab OAuth API  
+**Data Source:** Authorized market-data provider via OAuth-style access
 **Pipeline:** Python ThreadPoolExecutor -> SQLite  
 **Intervals:** Minute-level to Daily  
 """)

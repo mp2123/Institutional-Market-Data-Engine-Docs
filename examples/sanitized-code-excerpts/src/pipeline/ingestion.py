@@ -42,32 +42,44 @@ DATABASE_URI = f"sqlite:///{DB_PATH}"
 engine = create_engine(DATABASE_URI, echo=False)
 
 # ========================================================================
-# Schwab OAuth & API Configuration
+# Authorized Market-Data Provider Configuration
 # ========================================================================
-SCHWAB_APP_KEY = os.getenv("SCHWAB_APP_KEY")
-SCHWAB_APP_SECRET = os.getenv("SCHWAB_APP_SECRET")
-SCHWAB_CALLBACK_URL = "https://127.0.0.1:8182/callback"  # Must match your developer portal
-SCHWAB_TOKEN_PATH = os.getenv("SCHWAB_TOKEN_PATH", "./.local/schwab_token.json")
-SCHWAB_RESOURCE_VERSION = "1"
+# Public docs use provider-neutral environment names. The private
+# implementation keeps provider-specific OAuth details, token paths, and SDK
+# initialization out of this public proof shell.
+MARKET_DATA_APP_KEY = os.getenv("MARKET_DATA_APP_KEY")
+MARKET_DATA_APP_SECRET = os.getenv("MARKET_DATA_APP_SECRET")
+MARKET_DATA_CALLBACK_URL = os.getenv("MARKET_DATA_CALLBACK_URL", "https://localhost/callback")
+MARKET_DATA_TOKEN_PATH = os.getenv("MARKET_DATA_TOKEN_PATH", "./.local/market_data_token.json")
 
-from schwab.auth import easy_client
 
-
-def validate_schwab_config():
+def validate_market_data_config():
     missing = [
         name
         for name, value in {
-            "SCHWAB_APP_KEY": SCHWAB_APP_KEY,
-            "SCHWAB_APP_SECRET": SCHWAB_APP_SECRET,
+            "MARKET_DATA_APP_KEY": MARKET_DATA_APP_KEY,
+            "MARKET_DATA_APP_SECRET": MARKET_DATA_APP_SECRET,
         }.items()
         if not value
     ]
 
     if missing:
         raise RuntimeError(
-            "Missing required Schwab OAuth environment variables: "
+            "Missing required market-data OAuth environment variables: "
             + ", ".join(missing)
         )
+
+
+def build_market_data_client():
+    """
+    Return an authorized provider client.
+
+    Provider-specific SDK setup is intentionally omitted from this public
+    excerpt. The private implementation adapts the provider SDK behind a
+    small client surface with price-history methods.
+    """
+    validate_market_data_config()
+    raise NotImplementedError("Provider-specific SDK initialization is private.")
 
 
 # ========================================================================
@@ -123,9 +135,9 @@ def get_last_datetime_db(ticker, engine):
         return None
 
 # ========================================================================
-# Historical Data Retrieval via Schwab API
+# Historical Data Retrieval via Authorized Market-Data Provider
 # ========================================================================
-def fetch_data_via_schwab(ticker, period, interval, start_date=None, end_date=None, client=None):
+def fetch_data_via_provider(ticker, period, interval, start_date=None, end_date=None, client=None):
     """
     Fetches historical price data for a given ticker and interval.
     For 1h intervals, data is aggregated from 30-minute bars.
@@ -212,7 +224,7 @@ def fetch_data_via_schwab(ticker, period, interval, start_date=None, end_date=No
         df.sort_values("Datetime", inplace=True)
         return df
     except Exception as e:
-        logging.error(f"Error fetching data for {ticker} via Schwab API: {e}")
+        logging.error(f"Error fetching data for {ticker} via market-data provider: {e}")
         return pd.DataFrame()
 
 # ========================================================================
@@ -221,7 +233,7 @@ def fetch_data_via_schwab(ticker, period, interval, start_date=None, end_date=No
 def fetch_ticker_data(ticker, interval, client):
     """
     For each ticker, this function queries the database for the latest datetime,
-    then fetches new data from the Schwab API (only new rows). It also adds the
+    then fetches new data from the authorized market-data provider (only new rows). It also adds the
     current interval to the data.
     """
     try:
@@ -234,7 +246,7 @@ def fetch_ticker_data(ticker, interval, client):
             offset = get_interval_offset(interval)
             start_dt = last_dt + offset
             end_dt = pd.Timestamp.today() + pd.DateOffset(1)
-        df_new = fetch_data_via_schwab(ticker, period_val, interval, start_dt, end_dt, client=client)
+        df_new = fetch_data_via_provider(ticker, period_val, interval, start_dt, end_dt, client=client)
         if not df_new.empty:
             logging.info(f"Fetched {len(df_new)} new rows for {ticker} in {interval}.")
             df_new = df_new.sort_values("Datetime")
@@ -253,7 +265,7 @@ def fetch_ticker_data(ticker, interval, client):
 # ========================================================================
 def main():
     parser = argparse.ArgumentParser(
-        description="Download historical stock data via Charles Schwab API and update the local SQLite database."
+        description="Download historical stock data via an authorized market-data provider and update the local SQLite database."
     )
     parser.add_argument("--file", type=str,
                         default="examples/sample_watchlist.xlsx",
@@ -287,20 +299,11 @@ def main():
         logging.error(f"Failed to load tickers: {e}")
         return
 
-    # Create Schwab client with enum enforcement disabled
+    # Create authorized market-data client.
     try:
-        validate_schwab_config()
-        client = easy_client(
-            api_key=SCHWAB_APP_KEY,
-            app_secret=SCHWAB_APP_SECRET,
-            callback_url=SCHWAB_CALLBACK_URL,
-            token_path=SCHWAB_TOKEN_PATH,
-            interactive=True,
-            callback_timeout=300.0,
-            enforce_enums=False   # disable enum enforcement so we can pass strings
-        )
+        client = build_market_data_client()
     except Exception as e:
-        logging.error(f"Failed to create Schwab client: {e}")
+        logging.error(f"Failed to create market-data provider client: {e}")
         return
 
     total_new_rows = 0

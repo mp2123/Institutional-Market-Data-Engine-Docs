@@ -37,7 +37,7 @@ This repository is one node in Michael Panico's public market-data / quant-adjac
 
 ```mermaid
 flowchart LR
-    A["Charles Schwab API"] -- "OAuth / HTTPS" --> B["Python Ingestion Engine"]
+    A["Authorized market-data provider"] -- "OAuth / HTTPS" --> B["Python Ingestion Engine"]
     B -- "ThreadPoolExecutor" --> C["SQLite Data Warehouse"]
     C -- "Pandas / NumPy" --> D["ML Feature Engineering"]
     D -- "scikit-learn / hmmlearn" --> E["Streamlit Dashboard"]
@@ -51,7 +51,7 @@ This public repository includes:
 - Sanitized code excerpts demonstrating the integration pattern.
 
 This public repository will not include:
-- `.env` files or Schwab API credentials.
+- `.env` files, OAuth tokens, broker credentials, or provider API credentials.
 - The raw `market_data.db` SQLite file containing live market extracts.
 - Machine-specific pathing or absolute cron jobs.
 
